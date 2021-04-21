@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace TelerikBlazorApp1.Data
 {
+    public static class ViewModelService
+    {
+        static public List<IViewModel> GetData()
+        {
+            return new List<IViewModel> { new ViewModel("Test") { Name2 = "1" }, new ViewModel("Test") { Name2 = "2" }, new ViewModel("Test") { Name2 = "3" }, new ViewModel2("Test 2") { Name2 = "new" } };
+        }
+    }
+
     public class ViewModel : IViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;

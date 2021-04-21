@@ -209,11 +209,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var coll1 = new List<IViewModel> { new ViewModel("Test") { Name2 = "1" }, new ViewModel("Test") { Name2 = "2" }, new ViewModel("Test") { Name2 = "3" }, new ViewModel2("Test 2") { Name2 = "new" } };
+        Data = ViewModelService.GetData();
 
-        Data = coll1;
-
-        myContainer = new MyContainer(coll1);
+        myContainer = new MyContainer(Data);
 
         await base.OnInitializedAsync();
     }
@@ -240,7 +238,5 @@
     {
         VisibleData = Data.Skip(request.Skip).Take(request.PageSize).ToList();
     }
-
-    
 }
 
