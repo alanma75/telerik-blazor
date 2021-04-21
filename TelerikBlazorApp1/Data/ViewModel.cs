@@ -10,7 +10,12 @@ namespace TelerikBlazorApp1.Data
     {
         static public List<IViewModel> GetData()
         {
-            return new List<IViewModel> { new ViewModel("Test") { Name2 = "1" }, new ViewModel("Test") { Name2 = "2" }, new ViewModel("Test") { Name2 = "3" }, new ViewModel2("Test 2") { Name2 = "new" } };
+            return new List<IViewModel> { new ViewModel("Test1") { Name2 = "1" }, new ViewModel("Test2") { Name2 = "2" }, new ViewModel("Test3") { Name2 = "3" }, new ViewModel2("Test 2") { Name2 = "new" } };
+        }
+
+        static public List<IViewModel> GetViewModel3Data()
+        {
+            return new List<IViewModel> { new ViewModel3("Test1") { Name2 = "1" }, new ViewModel3("Test2") { Name2 = "2" }, new ViewModel3("Test3") { Name2 = "3" }, new ViewModel3("Test 2") { Name2 = "new" } };
         }
     }
 
@@ -34,7 +39,7 @@ namespace TelerikBlazorApp1.Data
         }
 
 
-        public string Id { get; set; }
+        public string Id { get; }
         public string Name { get; set; }
         public int Age { get; set; }
         public string Name2
@@ -66,7 +71,7 @@ namespace TelerikBlazorApp1.Data
         }
 
         public MagicString FieldMapping { get; set; } = new MagicString();
-        public string Id { get; set; }
+        public string Id { get; }
         public string Name { get; set; }
         public int Age { get; set; }
         public string Name2
@@ -90,6 +95,47 @@ namespace TelerikBlazorApp1.Data
         public List<RepeatAccount> Accounts { get; } = new List<RepeatAccount> { new RepeatAccount { Account = "Account1" }, new RepeatAccount { Account = "Account2" } };
     }
 
+    public class ViewModel3 : IViewModel
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string name2;
+
+        public ViewModel3()
+        {
+
+        }
+
+        public ViewModel3(string someService)
+        {
+            Id = someService.GetHashCode().ToString();
+        }
+
+        public MagicString FieldMapping { get; set; } = new MagicString();
+        public string Id { get; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Name2
+        {
+            get { return name2; }
+            set
+            {
+                if (name2 != value)
+                {
+                    name2 = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name2"));
+                }
+            }
+        }
+        public string Name3 { get; set; }
+        public string EventDrivenField { get; set; }
+
+        public string CalcField => $" {Name2} and {Name3}";
+
+        public IChildViewModel Child { get; set; } = new ChildViewModel();
+        public List<RepeatAccount> Accounts { get; } = new List<RepeatAccount> { new RepeatAccount { Account = "Account1" }, new RepeatAccount { Account = "Account2" } };
+    }
+
     public interface IViewModel : INotifyPropertyChanged, IBaseViewModel
     {
         MagicString FieldMapping { get; set; }
@@ -105,7 +151,7 @@ namespace TelerikBlazorApp1.Data
     // the properties in this Interface are visible on expression evaluation
     public interface IBaseViewModel
     {
-        string Id { get; set; }
+        string Id { get; }
         string Name { get; set; }
     }
 
