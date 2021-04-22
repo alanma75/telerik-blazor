@@ -1,0 +1,124 @@
+﻿@page "/ZoomIssue"
+@using Telerik.Blazor
+@using Telerik.Blazor.Components
+
+@inject IJSRuntime jsRuntime
+
+<TelerikGrid Data=@MainData
+        TotalCount="@Total"
+        Height="@Height"
+        RowHeight="@RowHeight"
+        PageSize="@PageSize"
+        ScrollMode="@GridScrollMode.Virtual">
+    <GridColumns>
+        <GridColumn Field=@nameof(Row.Order) Editable="false">
+            <Template>
+                @{
+                    var row = context as Row;
+                    <div>
+                        @row.Order
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field=@nameof(Row.Name) Editable="false">
+            <Template>
+                @{
+                    var row = context as Row;
+                    <div>
+                        @row.Name
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field=@nameof(Row.Time) Editable="false">
+            <Template>
+                @{
+                    var row = context as Row;
+                    <div>
+                        @row.Time
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field=@nameof(Row.Amount) Editable="false">
+            <Template>
+                @{
+                    var row = context as Row;
+                    <div>
+                        @row.Amount
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+    </GridColumns>
+</TelerikGrid>
+<TelerikButton OnClick="@OnRecalcOffset">Recalc Offset</TelerikButton>
+
+@code {
+
+    private const int RowHeight = 26;
+    private const string Height = "700px";
+    private const int PageSize = 40;
+
+    private List<Row> MainData { get; set; }
+
+    private List<Row> Data { get; set; }
+
+    private int Total { get; set; } = 0;
+
+    //private TelerikGrid<Row> Grid { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MainData = new List<Row>();
+        DateTime today = DateTime.Today;
+
+        for (int i = 0; i < 1000; i++)
+        {
+            for (int j = 3; j < 7; j++)
+            {
+                int c1 = (i / 26) % 26;
+                int c2 = i % 26;
+                Row vm = new Row();
+                vm.Name = new string((char)('A' + c1), 3) + new string((char)('A' + c2), j);
+                vm.Amount = i * 10 + j;
+                vm.Time = today.AddMilliseconds(i * 10 + j + 20000);
+                MainData.Add(vm);
+            }
+        }
+
+        MainData = MainData.OrderBy(e => e.Amount % 10).ToList();
+
+        for (int i = 0; i < MainData.Count; i++)
+        {
+            MainData[i].Order = i;
+        }
+
+        base.OnInitialized();
+    }
+
+
+    private async Task OnRecalcOffset()
+    {
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("recalcOffset");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    public class Row
+    {
+        public int Order { get; set; }
+
+        public string Name { get; set; }
+
+        public int Amount { get; set; }
+
+        public DateTime Time { get; set; }
+    }
+}
