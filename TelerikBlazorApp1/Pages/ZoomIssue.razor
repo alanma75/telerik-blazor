@@ -4,12 +4,15 @@
 
 @inject IJSRuntime jsRuntime
 
+<TelerikButton OnClick="@OnRecalcOffset">Recalc Offset</TelerikButton>
+
 <TelerikGrid Data=@MainData
-        TotalCount="@Total"
-        Height="@Height"
-        RowHeight="@RowHeight"
-        PageSize="@PageSize"
-        ScrollMode="@GridScrollMode.Virtual">
+             TotalCount="@Total"
+             Class="@UniqueClass"
+             Height="@Height"
+             RowHeight="@RowHeight"
+             PageSize="@PageSize"
+             ScrollMode="@GridScrollMode.Virtual">
     <GridColumns>
         <GridColumn Field=@nameof(Row.Order) Editable="false">
             <Template>
@@ -53,7 +56,6 @@
         </GridColumn>
     </GridColumns>
 </TelerikGrid>
-<TelerikButton OnClick="@OnRecalcOffset">Recalc Offset</TelerikButton>
 
 @code {
 
@@ -62,6 +64,7 @@
     private const int PageSize = 40;
 
     private List<Row> MainData { get; set; }
+    public string UniqueClass { get; set; } = "unique-grid";
 
     private List<Row> Data { get; set; }
 
@@ -96,6 +99,16 @@
         }
 
         base.OnInitialized();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("zoomTracker.init", UniqueClass);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
