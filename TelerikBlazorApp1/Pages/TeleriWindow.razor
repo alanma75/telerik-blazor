@@ -1,0 +1,37 @@
+﻿@page "/TelerikWindow"
+@using System.ComponentModel
+@using TelerikBlazorApp1.Data 
+
+<TelerikButton OnClick="() => showWindow1 = true">Show window 1</TelerikButton>
+<TelerikButton OnClick="() => showWindow2 = true">Show window 2</TelerikButton>
+
+<TelerikWindow @ref="@ModalWindow1" Width="1000px" Height="600px" Modal="true" Visible="showWindow1" VisibleChanged="(value) => showWindow1 = value">
+    <WindowTitle>1</WindowTitle>
+    <WindowActions>
+        <WindowAction Name="Close" />
+    </WindowActions>
+</TelerikWindow>
+<TelerikWindow @ref="@ModalWindow2" Width="1000px" Height="600px" Modal="true" Visible="showWindow2" VisibleChanged="(value) => showWindow2 = value">
+    <WindowTitle>2</WindowTitle>
+    <WindowActions>
+        <WindowAction Name="Close" />
+    </WindowActions>
+    <WindowContent>
+        <TelerikComboBox Data="@Selections" @bind-Value="SelectedValue">
+
+        </TelerikComboBox>
+        <TelerikMultiSelect Data="@Selections" @bind-Value="multiselectvalues"></TelerikMultiSelect>
+    </WindowContent>
+
+</TelerikWindow>
+@code {
+    private bool showWindow1;
+    private bool showWindow2;
+
+    public TelerikWindow ModalWindow1 { get; set; }
+    public TelerikWindow ModalWindow2 { get; set; }
+    public List<string> Selections = new List<string> { "aaaa", "bbbb", "cccc", "dddd", "eeee", "ffff", "gggg" };
+    public string SelectedValue;
+    public List<string> multiselectvalues;
+}
+
