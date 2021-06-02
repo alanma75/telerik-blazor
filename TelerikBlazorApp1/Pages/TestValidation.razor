@@ -1,0 +1,97 @@
+﻿@page "/TestValidation"
+
+@using System.ComponentModel.DataAnnotations;
+
+<TelerikGrid @ref="grid" Data="@forecasts" Height="550px" FilterMode="@GridFilterMode.FilterMenu"
+             Sortable="true" Pageable="true" PageSize="20" Groupable="true" Resizable="true" Reorderable="true"
+             EditMode="@GridEditMode.Incell">
+    <GridColumns>
+        <GridColumn Field="Id" Title="Id" Width="100px" Editable="false" Groupable="false" />
+        <GridColumn Field="Summary" Id="summary" Title="telerik bind-Value">
+            <Template>
+                @{
+                    var model = context as WeatherForecast;
+                    <span>@model.Summary</span>
+                }
+            </Template>
+            <EditorTemplate>
+                @{
+                    var model = context as WeatherForecast;
+                    <TelerikTextBox @bind-Value="@model.Summary"></TelerikTextBox>
+                }
+            </EditorTemplate>
+
+        </GridColumn>
+        <GridColumn Field="Summary" Id="summary" Title="Telerik oneway bind">
+            <Template>
+                @{
+                    var model = context as WeatherForecast;
+                    <span>@model.Summary</span>
+                }
+            </Template>
+            <EditorTemplate>
+                @{
+                    var model = context as WeatherForecast;
+                    <TelerikTextBox Value="@model.Summary" ValueExpression="() => model.Summary" OnChange="(v) => model.Summary = (string)v"></TelerikTextBox>
+                }
+            </EditorTemplate>
+
+        </GridColumn>
+        <GridColumn Field="Summary" Id="summary2" Title="use input">
+            <Template>
+                @{
+                    var model = context as WeatherForecast;
+                    <span>@model.Summary</span>
+                }
+            </Template>
+            <EditorTemplate>
+                @{
+                    var model = context as WeatherForecast;
+                    <input class="k-textbox" @bind="@model.Summary" @bind:event="onchange" />
+                }
+            </EditorTemplate>
+
+        </GridColumn>
+    </GridColumns>
+</TelerikGrid>
+
+
+@code {
+    List<WeatherForecast> forecasts { get; set; }
+    protected TelerikGrid<WeatherForecast> grid { get; set; }
+    protected string TextAreaValue { get; set; }
+    protected override void OnInitialized()
+    {
+        forecasts = WeatherForecast.GetForecastList();
+    }
+
+    public class WeatherForecast
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Your forecast requires a summary")]
+        [StringLength(20, ErrorMessage = "Summaries can be no more than 20 characters")]
+        public string Summary { get; set; }
+
+        public WeatherForecast()
+        {
+
+        }
+
+        static public List<WeatherForecast> GetForecastList()
+        {
+            var rng = new Random();
+            return Enumerable.Range(1, 150).Select(index => new WeatherForecast
+            {
+                Id = index,
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            }).ToList();
+
+        }
+
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+    }
+}
